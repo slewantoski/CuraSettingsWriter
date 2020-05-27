@@ -1,8 +1,10 @@
+# Copyright (c) 2020
+# The CuraSettingWritter plugin is released under the terms of the AGPLv3 or higher.
+
 from UM.Application import Application
 from UM.Preferences import Preferences
 from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.Workspace.WorkspaceWriter import WorkspaceWriter
-
 
 import UM.Settings.SettingRelation
 
@@ -65,8 +67,6 @@ class CuraSettingsWriter(WorkspaceWriter):
         stream.write("</table>")
         return True
 
-
-
     def _doTree(self,stack,key,stream,depth):   
         #output node
         if stack.getProperty(key,"type") == "category":
@@ -82,10 +82,18 @@ class CuraSettingsWriter(WorkspaceWriter):
             else:
                 stream.write("<tr>")
             stream.write("<td class="+style+" style='width:50%;padding-left:"+str(depth*25)+"'>" + str(stack.getProperty(key,"label")) + "</td>")
-            stream.write("<td class='"+style+" valueCol'>" + str(stack.getProperty(key,"value")) + "</td>")
+            GetType=stack.getProperty(key,"type")
+            GetVal=stack.getProperty(key,"value")
+            if str(GetType)=='float':
+                GelValStr="{:.2f}".format(GetVal).replace(".00", "")  # Formatage
+            else:
+                GelValStr=str(GetVal)
+                
+            stream.write("<td class='"+style+" valueCol'>" + GelValStr + "</td>")
+            
             stream.write("<td class="+style+" >" + str(stack.getProperty(key,"unit")) + "</td>")
             #stream.write("<td>" + str(stack.getProperty(key,"comments")) + "</td>")
-            #stream.write("<td>" + str(stack.getProperty(key,"type")) + "</td>")
+            
             stream.write("</tr>\n")
 
         #look for children
