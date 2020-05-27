@@ -2,6 +2,7 @@
 # The CuraSettingWritter plugin is released under the terms of the AGPLv3 or higher.
 
 from UM.Application import Application
+from cura.CuraVersion import CuraVersion  # type: ignore
 from UM.Preferences import Preferences
 from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.Workspace.WorkspaceWriter import WorkspaceWriter
@@ -42,23 +43,64 @@ class CuraSettingsWriter(WorkspaceWriter):
 
 
         stream.write("<table width=50% border=1 cellpadding=3>")
-
+        
+        # Version
+        stream.write("<tr>")
+        stream.write("<td class='ok' style='width:50%;padding-left:25'>Cura Version</td>")
+        stream.write("<td class='ok' colspan=2>" + str(CuraVersion) + "</td>")
+        stream.write("</tr>\n")  
+        # Job
+        J_Name = Application.getInstance().getPrintInformation().jobName
+        stream.write("<tr>")
+        stream.write("<td class='ok' style='width:50%;padding-left:25'>Job Name</td>")
+        stream.write("<td class='ok' colspan=2>" + str(J_Name) + "</td>")
+        stream.write("</tr>\n")         
+        # Snapshot
+        #stream.write("<tr>")
+        #stream.write("<td class='ok' colspan=3>" + str(F_Name) + "</td>")
+        #stream.write("</tr>\n")
+        #   Profile
+        P_Name = global_stack.qualityChanges.getMetaData().get("name", "")
+        stream.write("<tr>")
+        stream.write("<td class='ok' style='width:50%;padding-left:25'>Profile</td>")
+        stream.write("<td class='ok' colspan=2>" + str(P_Name) + "</td>")
+        stream.write("</tr>\n")
+        #   Quality
+        Q_Name = global_stack.quality.getMetaData().get("name", "")
+        stream.write("<tr>")
+        stream.write("<td class='ok' style='width:50%;padding-left:25'>Quality</td>")
+        stream.write("<td class='ok' colspan=2>" + str(Q_Name) + "</td>")
+        stream.write("</tr>\n")
+        #   Material
+        # M_Name = extruder.material.getMetaData().get("material", "")
+        extruders = list(global_stack.extruders.values())
+        M_Name = extruders[0].material.getMetaData().get("material", "")
+        stream.write("<tr>")
+        stream.write("<td class='ok' style='width:50%;padding-left:25'>Material</td>")
+        stream.write("<td class='ok' colspan=2>" + str(M_Name) + "</td>")
+        stream.write("</tr>\n")
+        
+        # Define every section to get the same order as in the Cura Interface
         self._doTree(global_stack,"resolution",stream,0)
         self._doTree(global_stack,"shell",stream,0)
         self._doTree(global_stack,"infill",stream,0)
         self._doTree(global_stack,"material",stream,0)
         self._doTree(global_stack,"speed",stream,0)
         self._doTree(global_stack,"travel",stream,0)
-
+        # Normaly it's the place for dual but as I don't Use it switched to the end
+        extruder_count=stack.getProperty("machine_extruder_count", "value")
+        if extruder_count>0 :
+            self._doTree(global_stack,"dual",stream,0)
+            
         self._doTree(global_stack,"cooling",stream,0)
         self._doTree(global_stack,"support",stream,0)
         self._doTree(global_stack,"platform_adhesion",stream,0)
         self._doTree(global_stack,"meshfix",stream,0)
         self._doTree(global_stack,"blackmagic",stream,0)
         self._doTree(global_stack,"experimental",stream,0)
-        self._doTree(global_stack,"dual",stream,0)
         self._doTree(global_stack,"machine_settings",stream,0)
 
+        # This Method is smarter but unfortunatly settings are not in the same ordrer as the Cura interface
         # for key in global_stack.getAllKeys():
         #     if global_stack.getProperty(key,"enabled") == True:
         #         if global_stack.getProperty(key,"type") == "category":
@@ -90,9 +132,7 @@ class CuraSettingsWriter(WorkspaceWriter):
                 GelValStr=str(GetVal)
                 
             stream.write("<td class='"+style+" valueCol'>" + GelValStr + "</td>")
-            
             stream.write("<td class="+style+" >" + str(stack.getProperty(key,"unit")) + "</td>")
-            #stream.write("<td>" + str(stack.getProperty(key,"comments")) + "</td>")
             
             stream.write("</tr>\n")
 
