@@ -1,26 +1,27 @@
 # Copyright (c) 2020
 # The CuraSettingWritter plugin is released under the terms of the AGPLv3 or higher.
 
-from UM.Application import Application
+from cura.CuraApplication import CuraApplication
 from cura.CuraVersion import CuraVersion  # type: ignore
-from UM.Preferences import Preferences
-from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.Workspace.WorkspaceWriter import WorkspaceWriter
 
-import UM.Settings.SettingRelation
+from UM.i18n import i18nCatalog
+catalog = i18nCatalog("cura")
 
 class CuraSettingsWriter(WorkspaceWriter):
-   
+ 
+ 
     def write(self, stream, nodes, mode):
+    
         stream.write("<style>")
         stream.write(" .category { font-size:1.5em; } ")
         stream.write(" .off { background-color:grey; } ")
         stream.write(" .valueCol { width:200px;text-align:right }")
         stream.write("</style>")
         
-        application = Application.getInstance()
-        machine_manager = application.getMachineManager()        
-        stack = application.getGlobalContainerStack()
+        _application = CuraApplication.getInstance()
+        machine_manager = _application.getMachineManager()        
+        stack = _application.getGlobalContainerStack()
 
         global_stack = machine_manager.activeMachine
 
@@ -50,7 +51,7 @@ class CuraSettingsWriter(WorkspaceWriter):
         stream.write("<td class='ok' colspan=2>" + str(CuraVersion) + "</td>")
         stream.write("</tr>\n")  
         # Job
-        J_Name = Application.getInstance().getPrintInformation().jobName
+        J_Name = _application.getInstance().getPrintInformation().jobName
         stream.write("<tr>")
         stream.write("<td class='ok' style='width:50%;padding-left:25'>Job Name</td>")
         stream.write("<td class='ok' colspan=2>" + str(J_Name) + "</td>")
@@ -123,7 +124,19 @@ class CuraSettingsWriter(WorkspaceWriter):
                 stream.write("<tr class=disabled>")
             else:
                 stream.write("<tr>")
-            stream.write("<td class="+style+" style='width:50%;padding-left:"+str(depth*25)+"'>" + str(stack.getProperty(key,"label")) + "</td>")
+            
+                definition_key=key + " label" 
+            # untranslated_label=stack.getProperty(key,"label").capitalize()
+            untranslated_label=stack.getProperty(key,"label")
+            # translated_label=catalog.i18nc(definition_key, untranslated_label)  
+            translated_label=catalog.i18nc("@label", untranslated_label)
+            
+            # translated_label=catalog.i18nc("@label", key)
+            # translated_label=catalog.i18n(untranslated_label)
+            
+            # catalog.i18nc("@tooltip", "Outer Wall") -> OK
+            # catalog.i18nc("@label", "Outer Wall") -> KO
+            stream.write("<td class="+style+" style='width:50%;padding-left:"+str(depth*25)+"'>" + str(translated_label) + "</td>")
             GetType=stack.getProperty(key,"type")
             GetVal=stack.getProperty(key,"value")
             if str(GetType)=='float':
