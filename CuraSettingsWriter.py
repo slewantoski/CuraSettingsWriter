@@ -87,9 +87,9 @@ class CuraSettingsWriter(WorkspaceWriter):
         self._doTree(global_stack,"material",stream,0)
         self._doTree(global_stack,"speed",stream,0)
         self._doTree(global_stack,"travel",stream,0)
-        # Normaly it's the place for dual but as I don't Use it switched to the end
+        # If single extruder doesn't export the data
         extruder_count=stack.getProperty("machine_extruder_count", "value")
-        if extruder_count>0 :
+        if extruder_count>1 :
             self._doTree(global_stack,"dual",stream,0)
             
         self._doTree(global_stack,"cooling",stream,0)
