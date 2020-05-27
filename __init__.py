@@ -8,7 +8,7 @@ def getMetaData():
         "workspace_writer": { 
             "output": [{
                 "extension": "html",
-                "description": catalog.i18nc("@item:inlistbox", "Cura Settings"),
+                "description": catalog.i18nc("@item:inlistbox", "Cura Settings Documentation"),
                 "mime_type": "text/html"
             }]
         }
