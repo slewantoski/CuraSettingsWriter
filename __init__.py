@@ -18,4 +18,4 @@ def getMetaData():
     }
 
 def register(app):
-    return { "workspace_writer": HtmlCuraSettingsCuraSettings.HtmlCuraSettingsCuraSettings() }
+    return { "workspace_writer": HtmlCuraSettings.HtmlCuraSettings() }

@@ -2,6 +2,8 @@
 # Initiale Source from Johnny Matthews 
 # The SnapShot plugin is released under the terms of the AGPLv3 or higher.
 
+import os
+
 from cura.CuraApplication import CuraApplication
 from UM.Workspace.WorkspaceWriter import WorkspaceWriter
 
@@ -19,9 +21,11 @@ class HtmlCuraSettings(WorkspaceWriter):
         
     def write(self, stream, nodes, mode):
     
+        # Current File path
+        Logger.log("d", "stream = %s", os.path.abspath(stream.name))
         
         stream.write("<style>")
-        stream.write(" .category { font-size:1.2em; } ")
+        stream.write(" .category { font-size:1.1em; background-color:rgb(142,170,219); } ")
         stream.write(" .off { background-color:grey; } ")
         stream.write(" .valueCol { width:200px;text-align:right }")
         stream.write("</style>")
