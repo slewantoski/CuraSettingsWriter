@@ -2,10 +2,10 @@
 # Initiale Source from Johnny Matthews 
 # The SnapShot plugin is released under the terms of the AGPLv3 or higher.
 
-from UM.Application import Application
+from cura.CuraApplication import CuraApplication
 from cura.CuraVersion import CuraVersion  # type: ignore
 from UM.Preferences import Preferences
-from UM.Settings.ContainerRegistry import ContainerRegistry
+
 from UM.Workspace.WorkspaceWriter import WorkspaceWriter
 
 from UM.i18n import i18nCatalog
@@ -18,14 +18,14 @@ class CuraSettingsWriter(WorkspaceWriter):
    
     def write(self, stream, nodes, mode):
         stream.write("<style>")
-        stream.write(" .category { font-size:1.5em; } ")
+        stream.write(" .category { font-size:1.2em; } ")
         stream.write(" .off { background-color:grey; } ")
         stream.write(" .valueCol { width:200px;text-align:right }")
         stream.write("</style>")
         
-        application = Application.getInstance()
-        machine_manager = application.getMachineManager()        
-        stack = application.getGlobalContainerStack()
+        _application = CuraApplication.getInstance()
+        machine_manager = _application.getMachineManager()        
+        stack = _application.getGlobalContainerStack()
 
         global_stack = machine_manager.activeMachine
 
@@ -54,7 +54,7 @@ class CuraSettingsWriter(WorkspaceWriter):
         stream.write("<td class='ok' colspan=2>" + str(CuraVersion) + "</td>")
         stream.write("</tr>\n")  
         # Job
-        J_Name = Application.getInstance().getPrintInformation().jobName
+        J_Name = CuraApplication.getInstance().getPrintInformation().jobName
         stream.write("<tr>")
         stream.write("<td class='ok' style='width:50%;padding-left:25'>Job Name</td>")
         stream.write("<td class='ok' colspan=2>" + str(J_Name) + "</td>")
