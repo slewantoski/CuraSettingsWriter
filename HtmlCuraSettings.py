@@ -35,13 +35,11 @@ class HtmlCuraSettings(WorkspaceWriter):
 
         global_stack = machine_manager.activeMachine
 
-        #jquery = open("plugins/plugins/HtmlCuraSettings/jquery-3.3.1.min.js","r", encoding="utf-8")
-        
+        # Script        
         stream.write("<script src='https://code.jquery.com/jquery-3.3.1.slim.min.js'></script>\n")
         stream.write("""<script>
                             $(document).ready(function(){
                                     $("#enabled").on("click",toggleDisabled);
-
                             });
 
                             function toggleDisabled(){
@@ -139,7 +137,7 @@ class HtmlCuraSettings(WorkspaceWriter):
             # translated_label=catalog.i18nc(definition_key, untranslated_label)  
             translated_label=catalog.i18nc("@label", untranslated_label)
             
-            stream.write("<td class="+style+" style='width:50%;padding-left:"+str(depth*25)+"'>" + str(translated_label) + "</td>")
+            stream.write("<td class="+style+" style='width:70%;padding-left:"+str(depth*25)+"'>" + str(translated_label) + "</td>")
             GetType=stack.getProperty(key,"type")
             GetVal=stack.getProperty(key,"value")
             if str(GetType)=='float':
@@ -148,7 +146,7 @@ class HtmlCuraSettings(WorkspaceWriter):
                 GelValStr=str(GetVal)
                 
             stream.write("<td class='"+style+" valueCol'>" + GelValStr + "</td>")
-            stream.write("<td class="+style+" >" + str(stack.getProperty(key,"unit")) + "</td>")
+            stream.write("<td class="+style+" style='width:10%'>" + str(stack.getProperty(key,"unit")) + "</td>")
             
             stream.write("</tr>\n")
 
