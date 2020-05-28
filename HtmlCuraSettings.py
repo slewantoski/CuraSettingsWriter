@@ -3,34 +3,35 @@
 # The SnapShot plugin is released under the terms of the AGPLv3 or higher.
 
 from cura.CuraApplication import CuraApplication
-from cura.CuraVersion import CuraVersion  # type: ignore
-from UM.Preferences import Preferences
-
 from UM.Workspace.WorkspaceWriter import WorkspaceWriter
+
+from cura.CuraVersion import CuraVersion  # type: ignore
 
 from UM.i18n import i18nCatalog
 catalog = i18nCatalog("cura")
 
+from UM.Logger import Logger
+from UM.Message import Message
 
-import UM.Settings.SettingRelation
 
-class CuraSettingsWriter(WorkspaceWriter):
-   
+class HtmlCuraSettings(WorkspaceWriter):
+
+        
     def write(self, stream, nodes, mode):
+    
+        
         stream.write("<style>")
         stream.write(" .category { font-size:1.2em; } ")
         stream.write(" .off { background-color:grey; } ")
         stream.write(" .valueCol { width:200px;text-align:right }")
         stream.write("</style>")
         
-        _application = CuraApplication.getInstance()
-        machine_manager = _application.getMachineManager()        
-        stack = _application.getGlobalContainerStack()
+        machine_manager = CuraApplication.getInstance().getMachineManager()        
+        stack = CuraApplication.getInstance().getGlobalContainerStack()
 
         global_stack = machine_manager.activeMachine
 
-
-        #jquery = open("plugins/plugins/CuraSettingsWriter/jquery-3.3.1.min.js","r", encoding="utf-8")
+        #jquery = open("plugins/plugins/HtmlCuraSettings/jquery-3.3.1.min.js","r", encoding="utf-8")
         
         stream.write("<script src='https://code.jquery.com/jquery-3.3.1.slim.min.js'></script>\n")
         stream.write("""<script>
@@ -134,11 +135,6 @@ class CuraSettingsWriter(WorkspaceWriter):
             # translated_label=catalog.i18nc(definition_key, untranslated_label)  
             translated_label=catalog.i18nc("@label", untranslated_label)
             
-            # translated_label=catalog.i18nc("@label", key)
-            # translated_label=catalog.i18n(untranslated_label)
-            
-            # catalog.i18nc("@tooltip", "Outer Wall") -> OK
-            # catalog.i18nc("@label", "Outer Wall") -> KO
             stream.write("<td class="+style+" style='width:50%;padding-left:"+str(depth*25)+"'>" + str(translated_label) + "</td>")
             GetType=stack.getProperty(key,"type")
             GetVal=stack.getProperty(key,"value")

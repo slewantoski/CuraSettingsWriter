@@ -1,7 +1,7 @@
 # Copyright (c) 2020 5axes
 # The SnapShot plugin is released under the terms of the AGPLv3 or higher.
 
-from . import CuraSettingsWriter
+from . import HtmlCuraSettings
 
 from UM.i18n import i18nCatalog
 catalog = i18nCatalog("cura")
@@ -18,4 +18,4 @@ def getMetaData():
     }
 
 def register(app):
-    return { "workspace_writer": CuraSettingsWriter.CuraSettingsWriter() }
+    return { "workspace_writer": HtmlCuraSettingsCuraSettings.HtmlCuraSettingsCuraSettings() }
