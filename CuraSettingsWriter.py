@@ -1,27 +1,31 @@
-# Copyright (c) 2020
-# The CuraSettingWritter plugin is released under the terms of the AGPLv3 or higher.
+# Copyright (c) 2020 5axes
+# Initiale Source from Johnny Matthews 
+# The SnapShot plugin is released under the terms of the AGPLv3 or higher.
 
-from cura.CuraApplication import CuraApplication
+from UM.Application import Application
 from cura.CuraVersion import CuraVersion  # type: ignore
+from UM.Preferences import Preferences
+from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.Workspace.WorkspaceWriter import WorkspaceWriter
 
 from UM.i18n import i18nCatalog
 catalog = i18nCatalog("cura")
 
+
+import UM.Settings.SettingRelation
+
 class CuraSettingsWriter(WorkspaceWriter):
- 
- 
+   
     def write(self, stream, nodes, mode):
-    
         stream.write("<style>")
         stream.write(" .category { font-size:1.5em; } ")
         stream.write(" .off { background-color:grey; } ")
         stream.write(" .valueCol { width:200px;text-align:right }")
         stream.write("</style>")
         
-        _application = CuraApplication.getInstance()
-        machine_manager = _application.getMachineManager()        
-        stack = _application.getGlobalContainerStack()
+        application = Application.getInstance()
+        machine_manager = application.getMachineManager()        
+        stack = application.getGlobalContainerStack()
 
         global_stack = machine_manager.activeMachine
 
@@ -42,7 +46,6 @@ class CuraSettingsWriter(WorkspaceWriter):
                         <h1>Cura Settings Export</h1>
                         <button id='enabled'>Toggle Disabled</button><P>""")
 
-
         stream.write("<table width=50% border=1 cellpadding=3>")
         
         # Version
@@ -51,7 +54,7 @@ class CuraSettingsWriter(WorkspaceWriter):
         stream.write("<td class='ok' colspan=2>" + str(CuraVersion) + "</td>")
         stream.write("</tr>\n")  
         # Job
-        J_Name = _application.getInstance().getPrintInformation().jobName
+        J_Name = Application.getInstance().getPrintInformation().jobName
         stream.write("<tr>")
         stream.write("<td class='ok' style='width:50%;padding-left:25'>Job Name</td>")
         stream.write("<td class='ok' colspan=2>" + str(J_Name) + "</td>")
@@ -125,7 +128,7 @@ class CuraSettingsWriter(WorkspaceWriter):
             else:
                 stream.write("<tr>")
             
-                definition_key=key + " label" 
+            definition_key=key + " label" 
             # untranslated_label=stack.getProperty(key,"label").capitalize()
             untranslated_label=stack.getProperty(key,"label")
             # translated_label=catalog.i18nc(definition_key, untranslated_label)  
