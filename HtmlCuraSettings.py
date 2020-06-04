@@ -50,7 +50,11 @@ class HtmlCuraSettings(WorkspaceWriter):
                         <button id='enabled'>Toggle Disabled</button><P>""")
 
         stream.write("<table width=50% border=1 cellpadding=3>")
-        
+        # Version
+        stream.write("<tr>")
+        stream.write("<td class='ok' style='width:50%;padding-left:25'>File</td>")
+        stream.write("<td class='ok' colspan=2>" + str(os.path.abspath(stream.name)) + "</td>")
+        stream.write("</tr>\n")        
         # Version
         stream.write("<tr>")
         stream.write("<td class='ok' style='width:50%;padding-left:25'>Cura Version</td>")
