@@ -49,6 +49,10 @@ class HtmlCuraSettings(WorkspaceWriter):
                         <h1>Cura Settings Export</h1>
                         <button id='enabled'>Toggle Disabled</button><P>""")
 
+        #Get extruder count
+        extruder_count=stack.getProperty("machine_extruder_count", "value")
+        
+        
         stream.write("<table width=50% border=1 cellpadding=3>")
         # Version
         stream.write("<tr>")
@@ -85,33 +89,39 @@ class HtmlCuraSettings(WorkspaceWriter):
         #   Material
         # M_Name = extruder.material.getMetaData().get("material", "")
         extruders = list(global_stack.extruders.values())
-        M_Name = extruders[0].material.getMetaData().get("material", "")
-        stream.write("<tr>")
-        stream.write("<td class='ok' style='width:50%;padding-left:25'>Material</td>")
-        stream.write("<td class='ok' colspan=2>" + str(M_Name) + "</td>")
-        stream.write("</tr>\n")
-        #Get extruder count
-        extruder_count=stack.getProperty("machine_extruder_count", "value")
-        
+        i=0
+        for Extrud in list(global_stack.extruders.values()):
+            i=i+1
+            M_Name = Extrud.material.getMetaData().get("material", "")
+            stream.write("<tr>")
+            MaterialStr="Material Extruder : %d"%i
+            stream.write("<td class='ok' style='width:50%;padding-left:25'>" + MaterialStr + "</td>")
+            stream.write("<td class='ok' colspan=2>" + str(M_Name) + "</td>")
+            stream.write("</tr>\n")
         
         # Define every section to get the same order as in the Cura Interface
         # Modification from global_stack to extruders[0]
-        self._doTree(extruders[0],"resolution",stream,0,1)
-        self._doTree(extruders[0],"shell",stream,0,1)
-        self._doTree(extruders[0],"infill",stream,0,1)
-        self._doTree(global_stack,"material",stream,0,0)
-        self._doTree(extruders[0],"speed",stream,0,1)
-        self._doTree(extruders[0],"travel",stream,0,1)
-        # If single extruder doesn't export the data
-        if extruder_count>1 :
-            self._doTree(extruders[0],"dual",stream,0,1)
-            
-        self._doTree(extruders[0],"cooling",stream,0,1)
-        self._doTree(extruders[0],"support",stream,0,1)
+        
+        i=0
+        for Extrud in list(global_stack.extruders.values()):
+            i=i+1
+            self._doTree(Extrud,"resolution",stream,0,i)
+            self._doTree(Extrud,"shell",stream,0,i)
+            self._doTree(Extrud,"infill",stream,0,i)
+            self._doTree(Extrud,"material",stream,0,i)
+            self._doTree(Extrud,"speed",stream,0,i)
+            self._doTree(Extrud,"travel",stream,0,i)
+            self._doTree(Extrud,"cooling",stream,0,i)
+
+            # If single extruder doesn't export the data
+            if extruder_count>1 :
+                self._doTree(Extrud,"dual",stream,0,i)
+
+        self._doTree(global_stack,"support",stream,0,0)
         self._doTree(global_stack,"platform_adhesion",stream,0,0)
-        self._doTree(extruders[0],"meshfix",stream,0,1)
-        self._doTree(extruders[0],"blackmagic",stream,0,1)
-        self._doTree(extruders[0],"experimental",stream,0,1)
+        self._doTree(global_stack,"meshfix",stream,0,0)
+        self._doTree(global_stack,"blackmagic",stream,0,0)
+        self._doTree(global_stack,"experimental",stream,0,0)
         self._doTree(global_stack,"machine_settings",stream,0,0)
 
         # This Method is smarter but unfortunatly settings are not in the same ordrer as the Cura interface
@@ -151,8 +161,10 @@ class HtmlCuraSettings(WorkspaceWriter):
             translated_label=catalog.i18nc("@label", untranslated_label)
             
             stream.write("<td class="+style+" style='width:70%;padding-left:"+str(depth*25)+"'>" + str(translated_label) + "</td>")
+            
             GetType=stack.getProperty(key,"type")
             GetVal=stack.getProperty(key,"value")
+            
             if str(GetType)=='float':
                 GelValStr="{:.2f}".format(GetVal).replace(".00", "")  # Formatage
             else:
@@ -164,8 +176,8 @@ class HtmlCuraSettings(WorkspaceWriter):
             stream.write("</tr>\n")
 
         #look for children
-        if len(stack.getSettingDefinition(key).children) > 0:
-            for i in stack.getSettingDefinition(key).children:       
+        if len(CuraApplication.getInstance().getGlobalContainerStack().getSettingDefinition(key).children) > 0:
+            for i in CuraApplication.getInstance().getGlobalContainerStack().getSettingDefinition(key).children:       
                 self._doTree(stack,i.key,stream,depth+1,extrud)
                     
                    
