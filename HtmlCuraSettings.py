@@ -96,24 +96,23 @@ class HtmlCuraSettings(WorkspaceWriter):
         
         # Define every section to get the same order as in the Cura Interface
         # Modification from global_stack to extruders[0]
-        self._doTree(extruders[0],"resolution",stream,0)
-        self._doTree(extruders[0],"shell",stream,0)
-        self._doTree(extruders[0],"infill",stream,0)
-        self._doTree(extruders[0],"material",stream,0)
-        self._doTree(extruders[0],"speed",stream,0)
-        self._doTree(extruders[0],"travel",stream,0)
+        self._doTree(extruders[0],"resolution",stream,0,1)
+        self._doTree(extruders[0],"shell",stream,0,1)
+        self._doTree(extruders[0],"infill",stream,0,1)
+        self._doTree(global_stack,"material",stream,0,0)
+        self._doTree(extruders[0],"speed",stream,0,1)
+        self._doTree(extruders[0],"travel",stream,0,1)
         # If single extruder doesn't export the data
-        extruder_count=stack.getProperty("machine_extruder_count", "value")
         if extruder_count>1 :
-            self._doTree(extruders[0],"dual",stream,0)
+            self._doTree(extruders[0],"dual",stream,0,1)
             
-        self._doTree(extruders[0],"cooling",stream,0)
-        self._doTree(extruders[0],"support",stream,0)
-        self._doTree(extruders[0],"platform_adhesion",stream,0)
-        self._doTree(extruders[0],"meshfix",stream,0)
-        self._doTree(extruders[0],"blackmagic",stream,0)
-        self._doTree(extruders[0],"experimental",stream,0)
-        self._doTree(extruders[0],"machine_settings",stream,0)
+        self._doTree(extruders[0],"cooling",stream,0,1)
+        self._doTree(extruders[0],"support",stream,0,1)
+        self._doTree(global_stack,"platform_adhesion",stream,0,0)
+        self._doTree(extruders[0],"meshfix",stream,0,1)
+        self._doTree(extruders[0],"blackmagic",stream,0,1)
+        self._doTree(extruders[0],"experimental",stream,0,1)
+        self._doTree(global_stack,"machine_settings",stream,0,0)
 
         # This Method is smarter but unfortunatly settings are not in the same ordrer as the Cura interface
         # for key in global_stack.getAllKeys():
@@ -124,11 +123,17 @@ class HtmlCuraSettings(WorkspaceWriter):
         stream.write("</table>")
         return True
 
-    def _doTree(self,stack,key,stream,depth):   
+    def _doTree(self,stack,key,stream,depth,extrud):   
         #output node
+        Info_Extrud=""
+        
         if stack.getProperty(key,"type") == "category":
             stream.write("<tr>")
-            stream.write("<td class=category colspan=3>" + str(stack.getProperty(key,"label")) + "</td>")
+            if extrud>0:
+                Info_Extrud="Extruder : %d %s"%(extrud,stack.getProperty(key,"label"))
+            else:
+                Info_Extrud=str(stack.getProperty(key,"label"))
+            stream.write("<td class=category colspan=3>" + str(Info_Extrud) + "</td>")
             #stream.write("<td class=category>" + str(key) + "</td>")
             stream.write("</tr>\n")
         else:
@@ -161,6 +166,6 @@ class HtmlCuraSettings(WorkspaceWriter):
         #look for children
         if len(stack.getSettingDefinition(key).children) > 0:
             for i in stack.getSettingDefinition(key).children:       
-                self._doTree(stack,i.key,stream,depth+1)
+                self._doTree(stack,i.key,stream,depth+1,extrud)
                     
                    
