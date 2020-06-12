@@ -1,5 +1,5 @@
 # Copyright (c) 2020 5axes
-# Initial Source from Johnny Matthews https://github.com/johnnygizmo/CuraSettingsWriter
+# Initial Source from Johnny Matthews https://github.com/johnnygizmo/CuraSettingsWriter 
 # The HTML plugin is released under the terms of the AGPLv3 or higher.
 
 import os
@@ -117,12 +117,12 @@ class HtmlCuraSettings(WorkspaceWriter):
             if extruder_count>1 :
                 self._doTree(Extrud,"dual",stream,0,i)
 
-        self._doTree(global_stack,"support",stream,0,0)
-        self._doTree(global_stack,"platform_adhesion",stream,0,0)
-        self._doTree(global_stack,"meshfix",stream,0,0)
-        self._doTree(global_stack,"blackmagic",stream,0,0)
-        self._doTree(global_stack,"experimental",stream,0,0)
-        self._doTree(global_stack,"machine_settings",stream,0,0)
+        self._doTree(extruders[0],"support",stream,0,0)
+        self._doTree(extruders[0],"platform_adhesion",stream,0,0)
+        self._doTree(extruders[0],"meshfix",stream,0,0)
+        self._doTree(extruders[0],"blackmagic",stream,0,0)
+        self._doTree(extruders[0],"experimental",stream,0,0)
+        self._doTree(extruders[0],"machine_settings",stream,0,0)
 
         # This Method is smarter but unfortunatly settings are not in the same ordrer as the Cura interface
         # for key in global_stack.getAllKeys():
