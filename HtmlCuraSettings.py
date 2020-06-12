@@ -1,6 +1,6 @@
 # Copyright (c) 2020 5axes
-# Initiale Source from Johnny Matthews 
-# The SnapShot plugin is released under the terms of the AGPLv3 or higher.
+# Initial Source from Johnny Matthews https://github.com/johnnygizmo/CuraSettingsWriter
+# The HTML plugin is released under the terms of the AGPLv3 or higher.
 
 import os
 
