@@ -47,7 +47,7 @@ class HtmlCuraSettings(WorkspaceWriter):
                             }
                         </script>
                         <h1>Cura Settings Export</h1>
-                        <button id='enabled'>Toggle Disabled</button><P>""")
+                        <button id='enabled'>Disabled parameters</button><P>""")
 
         #Get extruder count
         extruder_count=stack.getProperty("machine_extruder_count", "value")
