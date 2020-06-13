@@ -171,7 +171,8 @@ class HtmlCuraSettings(WorkspaceWriter):
             GetType=stack.getProperty(key,"type")
             GetVal=stack.getProperty(key,"value")
             if str(GetType)=='float':
-                GelValStr="{:.2f}".format(GetVal).replace(".00", "")  # Formatage
+                # GelValStr="{:.2f}".format(GetVal).replace(".00", "")  # Formatage
+                GelValStr="{:.4f}".format(GetVal).rstrip("0").rstrip(".") # Formatage thanks to r_moeller
             else:
                 GelValStr=str(GetVal)
                 
