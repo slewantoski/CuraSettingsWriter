@@ -4,6 +4,7 @@
 
 import os
 
+from datetime import datetime
 from cura.CuraApplication import CuraApplication
 from UM.Workspace.WorkspaceWriter import WorkspaceWriter
 
@@ -54,6 +55,11 @@ class HtmlCuraSettings(WorkspaceWriter):
         
         
         stream.write("<table width=50% border=1 cellpadding=3>")
+        # Date
+        stream.write("<tr>")
+        stream.write("<td class='ok' style='width:50%;padding-left:25'>Date</td>")
+        stream.write("<td class='ok' colspan=2>" + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + "</td>")
+        stream.write("</tr>\n")   
         # Version
         stream.write("<tr>")
         stream.write("<td class='ok' style='width:50%;padding-left:25'>File</td>")
@@ -164,15 +170,14 @@ class HtmlCuraSettings(WorkspaceWriter):
             
             GetType=stack.getProperty(key,"type")
             GetVal=stack.getProperty(key,"value")
-            
             if str(GetType)=='float':
                 GelValStr="{:.2f}".format(GetVal).replace(".00", "")  # Formatage
             else:
                 GelValStr=str(GetVal)
                 
             stream.write("<td class='"+style+" valueCol'>" + GelValStr + "</td>")
-            stream.write("<td class="+style+" style='width:10%'>" + str(stack.getProperty(key,"unit")) + "</td>")
             
+            stream.write("<td class="+style+" style='width:10%'>" + str(stack.getProperty(key,"unit")) + "</td>")
             stream.write("</tr>\n")
 
         #look for children
