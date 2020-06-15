@@ -25,11 +25,18 @@ class HtmlCuraSettings(WorkspaceWriter):
         # Current File path
         Logger.log("d", "stream = %s", os.path.abspath(stream.name))
         
+        stream.write("<!DOCTYPE html>")
+        stream.write("<meta charset=""UTF-8"">")
+        stream.write("<html>")
+        stream.write("<head>")
+        stream.write("<title>Cura Settings Export</title>")
+        stream.write("</head>")
         stream.write("<style>")
         stream.write(" .category { font-size:1.1em; background-color:rgb(142,170,219); } ")
         stream.write(" .off { background-color:grey; } ")
         stream.write(" .valueCol { width:200px;text-align:right }")
         stream.write("</style>")
+        stream.write("<body lang=EN>")
         
         machine_manager = CuraApplication.getInstance().getMachineManager()        
         stack = CuraApplication.getInstance().getGlobalContainerStack()
@@ -53,6 +60,8 @@ class HtmlCuraSettings(WorkspaceWriter):
         #Get extruder count
         extruder_count=stack.getProperty("machine_extruder_count", "value")
         
+        print_information = CuraApplication.getInstance().getPrintInformation()
+        
         
         stream.write("<table width=50% border=1 cellpadding=3>")
         # Date
@@ -60,7 +69,7 @@ class HtmlCuraSettings(WorkspaceWriter):
         stream.write("<td class='ok' style='width:50%;padding-left:25'>Date</td>")
         stream.write("<td class='ok' colspan=2>" + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + "</td>")
         stream.write("</tr>\n")   
-        # Version
+        # file
         stream.write("<tr>")
         stream.write("<td class='ok' style='width:50%;padding-left:25'>File</td>")
         stream.write("<td class='ok' colspan=2>" + str(os.path.abspath(stream.name)) + "</td>")
@@ -71,7 +80,7 @@ class HtmlCuraSettings(WorkspaceWriter):
         stream.write("<td class='ok' colspan=2>" + str(CuraVersion) + "</td>")
         stream.write("</tr>\n")  
         # Job
-        J_Name = CuraApplication.getInstance().getPrintInformation().jobName
+        J_Name = print_information.jobName
         stream.write("<tr>")
         stream.write("<td class='ok' style='width:50%;padding-left:25'>Job Name</td>")
         stream.write("<td class='ok' colspan=2>" + str(J_Name) + "</td>")
@@ -92,6 +101,24 @@ class HtmlCuraSettings(WorkspaceWriter):
         stream.write("<td class='ok' style='width:50%;padding-left:25'>Quality</td>")
         stream.write("<td class='ok' colspan=2>" + str(Q_Name) + "</td>")
         stream.write("</tr>\n")
+          
+        MAterial=0
+        #   materialWeights
+        for Mat in list(print_information.materialWeights):
+            MAterial=MAterial+Mat
+        if MAterial>0:
+            stream.write("<tr>")
+            stream.write("<td class='ok' style='width:50%;padding-left:25'>Material Weights</td>")
+            stream.write("<td class='ok' colspan=2>" + "{:.3f} g".format(MAterial).rstrip("0").rstrip(".") + "</td>")
+            stream.write("</tr>\n")        
+
+            #   Print time
+            P_Time = "%d d %d h %d mn"%(print_information.currentPrintTime.days,print_information.currentPrintTime.hours,print_information.currentPrintTime.minutes)
+            stream.write("<tr>")
+            stream.write("<td class='ok' style='width:50%;padding-left:25'>Print Time</td>")
+            stream.write("<td class='ok' colspan=2>" + P_Time + "</td>")
+            stream.write("</tr>\n") 
+
         #   Material
         # M_Name = extruder.material.getMetaData().get("material", "")
         extruders = list(global_stack.extruders.values())
@@ -137,6 +164,8 @@ class HtmlCuraSettings(WorkspaceWriter):
         #             self._doTree(global_stack,key,stream,0)
 
         stream.write("</table>")
+        stream.write("</body>")
+        stream.write("</html>")
         return True
 
     def _doTree(self,stack,key,stream,depth,extrud):   
