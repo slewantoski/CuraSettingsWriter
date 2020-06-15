@@ -141,7 +141,6 @@ class HtmlCuraSettings(WorkspaceWriter):
             
         # Define every section to get the same order as in the Cura Interface
         # Modification from global_stack to extruders[0]
-        
         i=0
         for Extrud in list(global_stack.extruders.values()):
             i=i+1
