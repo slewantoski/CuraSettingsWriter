@@ -3,6 +3,7 @@
 # The HTML plugin is released under the terms of the AGPLv3 or higher.
 
 import os
+import platform
 
 from datetime import datetime
 from cura.CuraApplication import CuraApplication
@@ -64,61 +65,50 @@ class HtmlCuraSettings(WorkspaceWriter):
         
         
         stream.write("<table width=50% border=1 cellpadding=3>")
-        # Date
-        stream.write("<tr>")
-        stream.write("<td class='ok' style='width:50%;padding-left:25'>Date</td>")
-        stream.write("<td class='ok' colspan=2>" + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + "</td>")
-        stream.write("</tr>\n")   
-        # file
-        stream.write("<tr>")
-        stream.write("<td class='ok' style='width:50%;padding-left:25'>File</td>")
-        stream.write("<td class='ok' colspan=2>" + str(os.path.abspath(stream.name)) + "</td>")
-        stream.write("</tr>\n")        
-        # Version
-        stream.write("<tr>")
-        stream.write("<td class='ok' style='width:50%;padding-left:25'>Cura Version</td>")
-        stream.write("<td class='ok' colspan=2>" + str(CuraVersion) + "</td>")
-        stream.write("</tr>\n")  
         # Job
         J_Name = print_information.jobName
         stream.write("<tr>")
         stream.write("<td class='ok' style='width:50%;padding-left:25'>Job Name</td>")
         stream.write("<td class='ok' colspan=2>" + str(J_Name) + "</td>")
+        stream.write("</tr>\n")
+        # File
+        # stream.write("<tr>")
+        # stream.write("<td class='ok' style='width:50%;padding-left:25'>File</td>")
+        # stream.write("<td class='ok' colspan=2>" + str(os.path.abspath(stream.name)) + "</td>")
+        # stream.write("</tr>\n") 
+        # Date
+        stream.write("<tr>")
+        stream.write("<td class='ok' style='width:50%;padding-left:25'>Date</td>")
+        stream.write("<td class='ok' colspan=2>" + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + "</td>")
+        stream.write("</tr>\n")
+        # platform
+        stream.write("<tr>")
+        stream.write("<td class='ok' style='width:50%;padding-left:25'>Os</td>")
+        stream.write("<td class='ok' colspan=2>" + str(platform.system()) + " " + str(platform.version()) + "</td>")
         stream.write("</tr>\n")         
+        # Version
+        stream.write("<tr>")
+        stream.write("<td class='ok' style='width:50%;padding-left:25'>Cura Version</td>")
+        stream.write("<td class='ok' colspan=2>" + str(CuraVersion) + "</td>")
+        stream.write("</tr>\n")  
+            
         # Snapshot
         #stream.write("<tr>")
         #stream.write("<td class='ok' colspan=3>" + str(F_Name) + "</td>")
         #stream.write("</tr>\n")
-        #   Profile
+        # Profile
         P_Name = global_stack.qualityChanges.getMetaData().get("name", "")
         stream.write("<tr>")
         stream.write("<td class='ok' style='width:50%;padding-left:25'>Profile</td>")
         stream.write("<td class='ok' colspan=2>" + str(P_Name) + "</td>")
         stream.write("</tr>\n")
-        #   Quality
+        # Quality
         Q_Name = global_stack.quality.getMetaData().get("name", "")
         stream.write("<tr>")
         stream.write("<td class='ok' style='width:50%;padding-left:25'>Quality</td>")
         stream.write("<td class='ok' colspan=2>" + str(Q_Name) + "</td>")
         stream.write("</tr>\n")
-          
-        MAterial=0
-        #   materialWeights
-        for Mat in list(print_information.materialWeights):
-            MAterial=MAterial+Mat
-        if MAterial>0:
-            stream.write("<tr>")
-            stream.write("<td class='ok' style='width:50%;padding-left:25'>Material Weights</td>")
-            stream.write("<td class='ok' colspan=2>" + "{:.3f} g".format(MAterial).rstrip("0").rstrip(".") + "</td>")
-            stream.write("</tr>\n")        
-
-            #   Print time
-            P_Time = "%d d %d h %d mn"%(print_information.currentPrintTime.days,print_information.currentPrintTime.hours,print_information.currentPrintTime.minutes)
-            stream.write("<tr>")
-            stream.write("<td class='ok' style='width:50%;padding-left:25'>Print Time</td>")
-            stream.write("<td class='ok' colspan=2>" + P_Time + "</td>")
-            stream.write("</tr>\n") 
-
+                
         #   Material
         # M_Name = extruder.material.getMetaData().get("material", "")
         extruders = list(global_stack.extruders.values())
@@ -131,7 +121,24 @@ class HtmlCuraSettings(WorkspaceWriter):
             stream.write("<td class='ok' style='width:50%;padding-left:25'>" + MaterialStr + "</td>")
             stream.write("<td class='ok' colspan=2>" + str(M_Name) + "</td>")
             stream.write("</tr>\n")
-        
+  
+        MAterial=0
+        #   materialWeights
+        for Mat in list(print_information.materialWeights):
+            MAterial=MAterial+Mat
+        if MAterial>0:
+            stream.write("<tr>")
+            stream.write("<td class='ok' style='width:50%;padding-left:25'>Material Weights</td>")
+            stream.write("<td class='ok' colspan=2>" + "{:.1f} g".format(MAterial).rstrip("0").rstrip(".") + "</td>")
+            stream.write("</tr>\n")        
+
+            #   Print time
+            P_Time = "%d d %d h %d mn"%(print_information.currentPrintTime.days,print_information.currentPrintTime.hours,print_information.currentPrintTime.minutes)
+            stream.write("<tr>")
+            stream.write("<td class='ok' style='width:50%;padding-left:25'>Print Time</td>")
+            stream.write("<td class='ok' colspan=2>" + P_Time + "</td>")
+            stream.write("</tr>\n")   
+            
         # Define every section to get the same order as in the Cura Interface
         # Modification from global_stack to extruders[0]
         
