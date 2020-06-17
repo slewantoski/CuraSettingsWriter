@@ -5,4 +5,6 @@ It creates an extra menu option under File -> "Save Project..." that allows you 
 
 ![Menu](./help/menu.jpg)
 
-See the [example_output.html](./help/Result.md) file for a preview of what you get on output.
+hereafter a sample screenshot of what you get as result.
+
+![rapport](./help/rapport.jpg)
