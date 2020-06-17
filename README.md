@@ -7,6 +7,6 @@ It creates an extra menu option under File -> "Save Project..." that allows you 
 
 ![Menu](./help/menu.jpg)
 
-hereafter a sample screenshot of what you get as result.
+Hereafter a sample screenshot of what you get as result.
 
 ![rapport](./help/rapport.jpg)
