@@ -1,7 +1,8 @@
 # Copyright (c) 2020 5axes
 # Initial Source from Johnny Matthews https://github.com/johnnygizmo/CuraSettingsWriter 
 # The HTML plugin is released under the terms of the AGPLv3 or higher.
-
+# Version 1.0.3 : simplify the source code with WriteTd
+#               : Export also the meshfix paramater section by extruder and complementary information on extruder for machine definition
 import os
 import platform
 
@@ -60,108 +61,80 @@ class HtmlCuraSettings(WorkspaceWriter):
 
         #Get extruder count
         extruder_count=stack.getProperty("machine_extruder_count", "value")
-        
         print_information = CuraApplication.getInstance().getPrintInformation()
-        
         
         stream.write("<table width=50% border=1 cellpadding=3>")
         # Job
-        J_Name = print_information.jobName
-        stream.write("<tr>")
-        stream.write("<td class='ok' style='width:50%;padding-left:25'>Job Name</td>")
-        stream.write("<td class='ok' colspan=2>" + str(J_Name) + "</td>")
-        stream.write("</tr>\n")
+        self._WriteTd(stream,"Job Name",print_information.jobName)
+        
         # File
-        # stream.write("<tr>")
-        # stream.write("<td class='ok' style='width:50%;padding-left:25'>File</td>")
-        # stream.write("<td class='ok' colspan=2>" + str(os.path.abspath(stream.name)) + "</td>")
-        # stream.write("</tr>\n") 
+        # self._WriteTd(stream,"File",os.path.abspath(stream.name))
         # Date
-        stream.write("<tr>")
-        stream.write("<td class='ok' style='width:50%;padding-left:25'>Date</td>")
-        stream.write("<td class='ok' colspan=2>" + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + "</td>")
-        stream.write("</tr>\n")
+        self._WriteTd(stream,"Date",datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
         # platform
-        stream.write("<tr>")
-        stream.write("<td class='ok' style='width:50%;padding-left:25'>Os</td>")
-        stream.write("<td class='ok' colspan=2>" + str(platform.system()) + " " + str(platform.version()) + "</td>")
-        stream.write("</tr>\n")         
-        # Version
-        stream.write("<tr>")
-        stream.write("<td class='ok' style='width:50%;padding-left:25'>Cura Version</td>")
-        stream.write("<td class='ok' colspan=2>" + str(CuraVersion) + "</td>")
-        stream.write("</tr>\n")  
+        self._WriteTd(stream,"Os",str(platform.system()) + " " + str(platform.version()))
+       
+        # Version  
+        self._WriteTd(stream,"Cura Version",CuraVersion)
             
-        # Snapshot
-        #stream.write("<tr>")
-        #stream.write("<td class='ok' colspan=3>" + str(F_Name) + "</td>")
-        #stream.write("</tr>\n")
         # Profile
         P_Name = global_stack.qualityChanges.getMetaData().get("name", "")
-        stream.write("<tr>")
-        stream.write("<td class='ok' style='width:50%;padding-left:25'>Profile</td>")
-        stream.write("<td class='ok' colspan=2>" + str(P_Name) + "</td>")
-        stream.write("</tr>\n")
+        self._WriteTd(stream,"Profile",P_Name)
         # Quality
         Q_Name = global_stack.quality.getMetaData().get("name", "")
-        stream.write("<tr>")
-        stream.write("<td class='ok' style='width:50%;padding-left:25'>Quality</td>")
-        stream.write("<td class='ok' colspan=2>" + str(Q_Name) + "</td>")
-        stream.write("</tr>\n")
+        self._WriteTd(stream,"Quality",Q_Name)
                 
-        #   Material
-        # M_Name = extruder.material.getMetaData().get("material", "")
+        # Material
         extruders = list(global_stack.extruders.values())
         i=0
         for Extrud in list(global_stack.extruders.values()):
-            i=i+1
+            i += 1
             M_Name = Extrud.material.getMetaData().get("material", "")
-            stream.write("<tr>")
             MaterialStr="Material Extruder : %d"%i
-            stream.write("<td class='ok' style='width:50%;padding-left:25'>" + MaterialStr + "</td>")
-            stream.write("<td class='ok' colspan=2>" + str(M_Name) + "</td>")
-            stream.write("</tr>\n")
+            self._WriteTd(stream,MaterialStr,M_Name)
   
         MAterial=0
         #   materialWeights
         for Mat in list(print_information.materialWeights):
             MAterial=MAterial+Mat
         if MAterial>0:
-            stream.write("<tr>")
-            stream.write("<td class='ok' style='width:50%;padding-left:25'>Material Weights</td>")
-            stream.write("<td class='ok' colspan=2>" + "{:.1f} g".format(MAterial).rstrip("0").rstrip(".") + "</td>")
-            stream.write("</tr>\n")        
-
+            M_Weight= "{:.1f} g".format(MAterial).rstrip("0").rstrip(".")
+            self._WriteTd(stream,"Material Weights",M_Weight)            
+            
             #   Print time
             P_Time = "%d d %d h %d mn"%(print_information.currentPrintTime.days,print_information.currentPrintTime.hours,print_information.currentPrintTime.minutes)
-            stream.write("<tr>")
-            stream.write("<td class='ok' style='width:50%;padding-left:25'>Print Time</td>")
-            stream.write("<td class='ok' colspan=2>" + P_Time + "</td>")
-            stream.write("</tr>\n")   
+            self._WriteTd(stream,"Print Time",P_Time)   
             
         # Define every section to get the same order as in the Cura Interface
         # Modification from global_stack to extruders[0]
         i=0
         for Extrud in list(global_stack.extruders.values()):
-            i=i+1
-            self._doTree(Extrud,"resolution",stream,0,i)
-            self._doTree(Extrud,"shell",stream,0,i)
-            self._doTree(Extrud,"infill",stream,0,i)
-            self._doTree(Extrud,"material",stream,0,i)
-            self._doTree(Extrud,"speed",stream,0,i)
-            self._doTree(Extrud,"travel",stream,0,i)
-            self._doTree(Extrud,"cooling",stream,0,i)
+            i += 1
+            self._doTree(Extrud,"resolution",stream,0,i,True)
+            self._doTree(Extrud,"shell",stream,0,i,True)
+            self._doTree(Extrud,"infill",stream,0,i,True)
+            self._doTree(Extrud,"material",stream,0,i,True)
+            self._doTree(Extrud,"speed",stream,0,i,True)
+            self._doTree(Extrud,"travel",stream,0,i,True)
+            self._doTree(Extrud,"cooling",stream,0,i,True)
 
             # If single extruder doesn't export the data
             if extruder_count>1 :
-                self._doTree(Extrud,"dual",stream,0,i)
+                self._doTree(Extrud,"dual",stream,0,i,True)
 
-        self._doTree(extruders[0],"support",stream,0,0)
-        self._doTree(extruders[0],"platform_adhesion",stream,0,0)
-        self._doTree(extruders[0],"meshfix",stream,0,0)
-        self._doTree(extruders[0],"blackmagic",stream,0,0)
-        self._doTree(extruders[0],"experimental",stream,0,0)
-        self._doTree(extruders[0],"machine_settings",stream,0,0)
+        self._doTree(extruders[0],"support",stream,0,0,True)
+        self._doTree(extruders[0],"platform_adhesion",stream,0,0,True)
+        i=0
+        for Extrud in list(global_stack.extruders.values()):
+            i += 1
+            self._doTree(Extrud,"meshfix",stream,0,i,True)
+        self._doTree(extruders[0],"blackmagic",stream,0,0,True)
+        self._doTree(extruders[0],"experimental",stream,0,0,True)
+        self._doTree(extruders[0],"machine_settings",stream,0,0,True)
+        i=0
+        for Extrud in list(global_stack.extruders.values()):
+            i += 1
+            self._doTree(Extrud,"machine_settings",stream,0,i,False)
 
         # This Method is smarter but unfortunatly settings are not in the same ordrer as the Cura interface
         # for key in global_stack.getAllKeys():
@@ -174,7 +147,15 @@ class HtmlCuraSettings(WorkspaceWriter):
         stream.write("</html>")
         return True
 
-    def _doTree(self,stack,key,stream,depth,extrud):   
+    def _WriteTd(self,stream,Key,ValStr):
+
+        stream.write("<tr>")
+        stream.write("<td class='ok' style='width:50%;padding-left:25'>" + Key + "</td>")
+        stream.write("<td class='ok' colspan=2>" + str(ValStr) + "</td>")
+        stream.write("</tr>\n")
+            
+               
+    def _doTree(self,stack,key,stream,depth,extrud,Full):   
         #output node
         Info_Extrud=""
         
@@ -217,8 +198,14 @@ class HtmlCuraSettings(WorkspaceWriter):
             stream.write("</tr>\n")
 
         #look for children
-        if len(CuraApplication.getInstance().getGlobalContainerStack().getSettingDefinition(key).children) > 0:
-            for i in CuraApplication.getInstance().getGlobalContainerStack().getSettingDefinition(key).children:       
-                self._doTree(stack,i.key,stream,depth+1,extrud)
+        if Full == True:
+            if len(CuraApplication.getInstance().getGlobalContainerStack().getSettingDefinition(key).children) > 0:
+                for i in CuraApplication.getInstance().getGlobalContainerStack().getSettingDefinition(key).children:       
+                    self._doTree(stack,i.key,stream,depth+1,extrud,Full)
+        else:
+            if len(stack.getSettingDefinition(key).children) > 0:
+                for i in stack.getSettingDefinition(key).children:       
+                    self._doTree(stack,i.key,stream,depth+1,extrud,Full)                  
+
                     
-                   
+ 
