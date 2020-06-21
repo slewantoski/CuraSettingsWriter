@@ -10,3 +10,7 @@ It creates an extra menu option under File -> "Save Project..." that allows you 
 Hereafter a sample screenshot of what you get as result.
 
 ![rapport](./help/rapport.jpg)
+
+## Modifications
+
+- 1.0.03 Adding translations to the text
