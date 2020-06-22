@@ -13,4 +13,4 @@ Hereafter a sample screenshot of what you get as result.
 
 ## Modifications
 
-- 1.0.03 Adding translations to the text
+- 1.0.03 Parameters are now translated in the native langage choosen in the Cura settings
