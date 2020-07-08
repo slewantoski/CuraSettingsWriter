@@ -14,4 +14,4 @@ Hereafter a sample screenshot of what you get as result.
 ## Modifications
 
 - 1.0.3 Parameters are now translated in the native langage choosen in the Cura settings
-- 1.0.4 Ttml cleanup, no jquery dependency  thanks to [etet100](https://github.com/etet100) 
+- 1.0.4 Html cleanup, no more jquery dependency,  thanks to [etet100](https://github.com/etet100) 
