@@ -3,6 +3,8 @@
 # The HTML plugin is released under the terms of the AGPLv3 or higher.
 # Version 1.0.3 : simplify the source code with WriteTd
 #               : Export also the meshfix paramater section by extruder and complementary information on extruder for machine definition
+# Version 1.0.4 : html cleanup, no jquery dependency  thanks to https://github.com/etet100
+#  
 import os
 import platform
 
@@ -222,7 +224,6 @@ class HtmlCuraSettings(WorkspaceWriter):
         ExtruderStrg = i18n_cura_catalog.i18nc("@label", "Extruder")
         
         if stack.getProperty(key,"type") == "category":
-            stream.write("<tr>")
             if extrud>0:
                 untranslated_label=stack.getProperty(key,"label")
                 translated_label=i18n_extrud_catalog.i18nc(definition_key, untranslated_label)
@@ -231,8 +232,7 @@ class HtmlCuraSettings(WorkspaceWriter):
                 untranslated_label=stack.getProperty(key,"label")
                 translated_label=i18n_extrud_catalog.i18nc(definition_key, untranslated_label)
                 Info_Extrud=str(translated_label)
-            stream.write("<td class='category' colspan='3'>" + str(Info_Extrud) + "</td>")
-            #stream.write("<td class=category>" + str(key) + "</td>")
+            stream.write("<tr class='category'><td colspan='3'>" + str(Info_Extrud) + "</td>")
             stream.write("</tr>\n")
         else:
             if stack.getProperty(key,"enabled") == False:
