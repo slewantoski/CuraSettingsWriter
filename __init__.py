@@ -1,5 +1,5 @@
 # Copyright (c) 2020 5axes
-# The SnapShot plugin is released under the terms of the AGPLv3 or higher.
+# The HtmlCuraSettings plugin is released under the terms of the AGPLv3 or higher.
 
 from . import HtmlCuraSettings
 
