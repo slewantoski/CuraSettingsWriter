@@ -1,6 +1,7 @@
 # Copyright (c) 2020 5axes, modified to TXT by slewantoski
+# Forked from 5axes Html Cura Settings https://github.com/5axes/CuraSettingsWriter
 # Initial Source from Johnny Matthews https://github.com/johnnygizmo/CuraSettingsWriter 
-# The HTML plugin is released under the terms of the AGPLv3 or higher.
+# The TXT plugin is released under the terms of the AGPLv3 or higher.
 # Version 1.0.3 : simplify the source code with WriteTd
 #               : Export also the meshfix paramater section by extruder and complementary information on extruder for machine definition
 # Version 1.0.4 : html cleanup, no jquery dependency  thanks to https://github.com/etet100

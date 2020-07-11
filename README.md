@@ -1,15 +1,17 @@
-# Html Cura Settings
-Cura Plugin for Exporting Settings to an HTML file.
+# TXT Cura Settings
+Cura Plugin for Exporting Settings to an TXT file.
+
+Forked from 5axes Html Cura Settings : [https://github.com/5axes/CuraSettingsWriter](https://github.com/5axes/CuraSettingsWriter)
 
 Initial Source from Johnny Matthews :  [github.com/johnnygizmo/CuraSettingsWriter](https://github.com/johnnygizmo/CuraSettingsWriter)
 
-It creates an extra menu option under File -> "Save Project..." that allows you to save all of the settings to an HTML file for review/sharing. 
+It creates an extra menu option under File -> "Save Project..." that allows you to save all of the settings to an TXT file for easy comparing profiles. 
 
-![Menu](./help/menu.jpg)
+![Menu](./help/menu.png)
 
 Hereafter a sample screenshot of what you get as result.
 
-![rapport](./help/rapport.jpg)
+![rapport](./help/sample.png)
 
 ## Modifications
 

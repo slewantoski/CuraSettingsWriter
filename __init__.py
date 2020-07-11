@@ -1,5 +1,5 @@
 # Copyright (c) 2020 5axes, modified to TXT by slewantoski
-# The HtmlCuraSettings plugin is released under the terms of the AGPLv3 or higher.
+# The TXTCuraSettings plugin is released under the terms of the AGPLv3 or higher.
 
 from . import TXTCuraSettings
 
