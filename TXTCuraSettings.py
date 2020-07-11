@@ -1,4 +1,4 @@
-# Copyright (c) 2020 5axes
+# Copyright (c) 2020 5axes, modified to TXT by slewantoski
 # Initial Source from Johnny Matthews https://github.com/johnnygizmo/CuraSettingsWriter 
 # The HTML plugin is released under the terms of the AGPLv3 or higher.
 # Version 1.0.3 : simplify the source code with WriteTd
@@ -22,34 +22,12 @@ i18n_extrud_catalog = i18nCatalog("fdmextruder.def.json")
 from UM.Logger import Logger
 from UM.Message import Message
 
-class HtmlCuraSettings(WorkspaceWriter):
+class TXTCuraSettings(WorkspaceWriter):
 
     def write(self, stream, nodes, mode):
     
         # Current File path
         Logger.log("d", "stream = %s", os.path.abspath(stream.name))
-        
-        stream.write("""<!DOCTYPE html>
-            <meta charset='UTF-8'>
-            <head>
-                <title>Cura Settings Export</title>
-                <style>
-                    tr.category td { font-size: 1.1em; background-color: rgb(142,170,219); }
-                    tr.disabled td { background-color: #eaeaea; color: #717171; }
-                    body.hide-disabled tr.disabled { display: none; }
-                    .val { width: 200px; text-align: right; }
-                    .w-10 { width: 10%; }
-                    .w-50 { width: 50%; }
-                    .w-70 { width: 70%; }
-                    .pl-l { padding-left: 20px; }
-                    .pl-2 { padding-left: 40px; }
-                    .pl-3 { padding-left: 60px; }
-                    .pl-4 { padding-left: 80px; }
-                    .pl-5 { padding-left: 100px; }
-                </style>
-            </head>
-            <body lang=EN>
-        \n""")
         
         machine_manager = CuraApplication.getInstance().getMachineManager()        
         stack = CuraApplication.getInstance().getGlobalContainerStack()
@@ -57,24 +35,14 @@ class HtmlCuraSettings(WorkspaceWriter):
         global_stack = machine_manager.activeMachine
 
         TitleTxt =i18n_cura_catalog.i18nc("@label","Print settings")
-        ButtonTxt = i18n_cura_catalog.i18nc("@action:label","Visible settings:")
 
-        stream.write("<h1>" + TitleTxt + "</h1>\n")
-        stream.write("<button id='enabled'>" + ButtonTxt + "</button><P>\n")
-
-        # Script       
-        stream.write("""<script>
-                            var enabled = document.getElementById('enabled');
-                            enabled.addEventListener('click', function() {
-                                document.body.classList.toggle('hide-disabled');
-                            });
-                        </script>\n""")
+        stream.write(TitleTxt+ "\n")
 
         #Get extruder count
         extruder_count=stack.getProperty("machine_extruder_count", "value")
         print_information = CuraApplication.getInstance().getPrintInformation()
         
-        stream.write("<table width='50%' border='1' cellpadding='3'>")
+        #   ####stream.write("<table width='50%' border='1' cellpadding='3'>")
         # Job
         self._WriteTd(stream,i18n_cura_catalog.i18nc("@label","Job Name"),print_information.jobName)
         
@@ -153,17 +121,12 @@ class HtmlCuraSettings(WorkspaceWriter):
         #         if global_stack.getProperty(key,"type") == "category":
         #             self._doTree(global_stack,key,stream,0)
 
-        stream.write("</table>")
-        stream.write("</body>")
-        stream.write("</html>")
         return True
 
     def _WriteTd(self,stream,Key,ValStr):
 
-        stream.write("<tr>")
-        stream.write("<td class='w-50'>" + Key + "</td>")
-        stream.write("<td colspan='2'>" + str(ValStr) + "</td>")
-        stream.write("</tr>\n")
+        stream.write(Key + ": ")
+        stream.write(str(ValStr) + "\n")
             
                
     def _doTree(self,stack,key,stream,depth,extrud):   
@@ -173,7 +136,6 @@ class HtmlCuraSettings(WorkspaceWriter):
         ExtruderStrg = i18n_cura_catalog.i18nc("@label", "Extruder")
         
         if stack.getProperty(key,"type") == "category":
-            stream.write("<tr class='category'>")
             if extrud>0:
                 untranslated_label=stack.getProperty(key,"label")
                 translated_label=i18n_catalog.i18nc(definition_key, untranslated_label)
@@ -182,20 +144,13 @@ class HtmlCuraSettings(WorkspaceWriter):
                 untranslated_label=stack.getProperty(key,"label")
                 translated_label=i18n_catalog.i18nc(definition_key, untranslated_label)
                 Info_Extrud=str(translated_label)
-            stream.write("<td colspan='3'>" + str(Info_Extrud) + "</td>")
-            #stream.write("<td class=category>" + str(key) + "</td>")
-            stream.write("</tr>\n")
+                stream.write(str(Info_Extrud) + "\n")
         else:
-            if stack.getProperty(key,"enabled") == False:
-                stream.write("<tr class='disabled'>")
-            else:
-                stream.write("<tr>")
-            
             # untranslated_label=stack.getProperty(key,"label").capitalize()
             untranslated_label=stack.getProperty(key,"label")           
             translated_label=i18n_catalog.i18nc(definition_key, untranslated_label)
             
-            stream.write("<td class='w-70 pl-"+str(depth)+"'>" + str(translated_label) + "</td>")
+            stream.write(str(translated_label) + ": ")
             
             GetType=stack.getProperty(key,"type")
             GetVal=stack.getProperty(key,"value")
@@ -205,10 +160,9 @@ class HtmlCuraSettings(WorkspaceWriter):
             else:
                 GelValStr=str(GetVal)
                 
-            stream.write("<td class='val'>" + GelValStr + "</td>")
+            stream.write(GelValStr)
             
-            stream.write("<td class='w-10'>" + str(stack.getProperty(key,"unit")) + "</td>")
-            stream.write("</tr>\n")
+            stream.write(str(stack.getProperty(key,"unit")) + "\n")
 
             depth += 1
 
@@ -232,19 +186,13 @@ class HtmlCuraSettings(WorkspaceWriter):
                 untranslated_label=stack.getProperty(key,"label")
                 translated_label=i18n_extrud_catalog.i18nc(definition_key, untranslated_label)
                 Info_Extrud=str(translated_label)
-            stream.write("<tr class='category'><td colspan='3'>" + str(Info_Extrud) + "</td>")
-            stream.write("</tr>\n")
+            stream.write(str(Info_Extrud) + "\n")
         else:
-            if stack.getProperty(key,"enabled") == False:
-                stream.write("<tr class='disabled'>")
-            else:
-                stream.write("<tr>")
-            
             # untranslated_label=stack.getProperty(key,"label").capitalize()
             untranslated_label=stack.getProperty(key,"label")           
             translated_label=i18n_extrud_catalog.i18nc(definition_key, untranslated_label)
             
-            stream.write("<td class='w-70 pl-"+str(depth)+"'>" + str(translated_label) + "</td>")
+            stream.write(str(translated_label) + ": ")
             
             GetType=stack.getProperty(key,"type")
             GetVal=stack.getProperty(key,"value")
@@ -254,10 +202,9 @@ class HtmlCuraSettings(WorkspaceWriter):
             else:
                 GelValStr=str(GetVal)
                 
-            stream.write("<td class='val'>" + GelValStr + "</td>")
+            stream.write(GelValStr)
             
-            stream.write("<td class='w-10'>" + str(stack.getProperty(key,"unit")) + "</td>")
-            stream.write("</tr>\n")
+            stream.write(str(stack.getProperty(key,"unit")) + "\n")
 
             depth += 1
 

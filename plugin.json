@@ -1,8 +1,8 @@
 {
-    "name": "HTML Cura Settings",
-    "author": "5axes",
+    "name": "TXT Cura Settings",
+    "author": "5axes, modified to TXT by slewantoski",
     "version": "1.0.4",
-    "description": "Export settings to an HTML File",
+    "description": "Export settings to an TXT File",
     "api": 7,
 	"supported_sdk_versions": ["6.0.0", "7.0.0", "7.1.0", "7.2.0"],
     "i18n-catalog":"cura"
